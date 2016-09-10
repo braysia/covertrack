@@ -15,9 +15,9 @@ Covertrack goes through the following 7 modules.
 
 From 2 to 6, you can specify what algorithms to use.  
 
-In __*_operations.py__(e.g. *covertrackdev/segmentation/segmentation_operations.py*), you will see a list of functions.  Each functions (or operations) defines a unique algorithm. So this file is a catalogue of functions.
+In __*_operations.py__(e.g. *covertrack/segmentation/segmentation_operations.py*), you will see a list of functions.  Each functions (or operations) defines a unique algorithm. So this file is a catalogue of functions.
 
-In *covertrackdev/segmentation/segmentation_operations.py*, you will see a following example.
+In *covertrack/segmentation/segmentation_operations.py*, you will see a following example.
 ```
 def example_thres(img, holder, THRES=100):
     return skilabel(img > THRES)

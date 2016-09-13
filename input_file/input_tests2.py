@@ -1,5 +1,4 @@
 from os.path import join, dirname, abspath
-import os
 
 ROOT_FOLDER = dirname(dirname(abspath(__file__)))
 input_parent_dir = join(ROOT_FOLDER, 'data', 'testimages2')

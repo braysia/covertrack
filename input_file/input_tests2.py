@@ -11,13 +11,8 @@ last_frame = None
 channels = ['Far-red', 'YFP']
 objects = ['nuclei', 'cytoplasm']  # first object will be used for tracking
 
-"""Arguments for Preprocessing.
-Examples:
-    preprocess_args = (dict(name='background_subtraction_prcblock'), )
-    preprocess_args = (dict(name='background_subtraction_prcblock', ch='YFP'), )
-    preprocess_args = (dict(name='n4_illum_correction', RATIO=2.0),
-                       dict(name='smooth_curvature_anisotropic'))
-"""
+setup_args = ((dict(name='retrieve_files', channels=['Far-red', 'YFP'])), )
+
 preprocess_args = (dict(name='background_subtraction_wavelet'), )
 
 segment_args = (dict(name='constant_lap_edge', SHRINK=1, NUCRAD=9, THRES=120, REGWSHED=10),)

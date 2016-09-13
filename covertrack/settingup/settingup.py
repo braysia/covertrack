@@ -12,9 +12,6 @@ import setup_operations as operations
 # Output folders
 FOLDERNAMES = ['objects', 'channels', 'outlines', 'storage', 'processed',
                'segmented', 'tracked', 'cleaned']
-IMG_EXT = ['png', 'tif']
-
-IGNORE_PROCESSED = False
 
 
 class Holder(object):
@@ -38,6 +35,7 @@ class SettingUpCaller(object):
         self.prepare_outputdir()
         self.run_operations()
         self._load_img_shape()
+        self._set_time()
         self.save_setting()
         self.logger.warn('{0} completed for {1}.'.format(self.PROCESS, self.argdict['outputdir']))
         return self.argdict['outputdir']
@@ -51,6 +49,10 @@ class SettingUpCaller(object):
 
     def _load_img_shape(self):
         self.argdict['img_shape'] = imread(self.argdict['channeldict'].values()[0][0]).shape
+
+    def _set_time(self):
+        if 'time' not in self.argdict:
+            self.argdict['time'] = range(len(self.argdict['channeldict'].values()[0]))
 
     def save_setting(self):
         with open(join(self.argdict['outputdir'], 'setting.json'), 'w') as f1:

@@ -13,8 +13,6 @@ from covertrack.utils.file_handling import _check_if_processed, pd_array_convert
 from itertools import product
 import json
 import re
-from covertrack.utils.file_handling import initialize_threed_array, extend_threed_array
-from covertrack.utils.file_handling import save_arr_labels
 
 
 # ARG_VAR = 'apply_operations.py'
@@ -110,7 +108,7 @@ class ApplyObjects(object):
         '''To read, use df = pd.read_csv('df.csv', index_col=['object', 'ch', 'prop', 'frame'])'''
         self.df.to_csv(join(self.argdict['outputdir'], 'df.csv'))
         self.logger.info('df.csv saved')
-        pd_array_convert_cell_prop(join(self.argdict['outputdir'], 'df.csv'))
+        pd_array_convert_cell_prop(join(self.argdict['outputdir'], 'df.csv'), self.argdict['time'])
 
     def _check_already_existed(self):
         already_existed = False

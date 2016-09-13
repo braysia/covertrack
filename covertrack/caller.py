@@ -17,7 +17,7 @@ import imp
 import argparse
 from argparse import Namespace  # this is required for fireworks
 from logging import getLogger, StreamHandler, FileHandler, DEBUG, WARNING, INFO
-
+import shutil
 
 PROCESSES = ('setup', 'preprocess', 'segment', 'track', 'postprocess',
              'subdetect', 'apply', 'compress')
@@ -50,6 +50,9 @@ class CovertrackArgs(Covertrack):
 
     def run(self):
         outputdir = self.set_output()
+        if self.args.clean:
+            if exists(outputdir):
+                shutil.rmtree(outputdir)
         self.establish_logger(outputdir, self.args.quiet, self.args.verbose)
         if self.args.setup:
             outputdir = SettingUpCaller(self.ia_path, self.imgdir).run()
@@ -67,6 +70,8 @@ class CovertrackArgs(Covertrack):
             SubDetection(outputdir).run()
         if self.args.apply:
             ApplyObjects(outputdir).run()
+        if self.args.delete:
+            self._attempt_delete(outputdir)
 
     def set_output(self):
         argfile = imp.load_source('inputArgs', self.ia_path)
@@ -74,6 +79,12 @@ class CovertrackArgs(Covertrack):
         if self.imgdir is not None:
             outputdir = join(outputdir, basename(self.imgdir))
         return outputdir
+
+    def _attempt_delete(self, outputdir):
+        for f in ('cleaned', 'segmented', 'tracked', 'storage', 'processed'):
+            shutil.rmtree(join(outputdir, f))
+        for file in ('df.csv', 'ini_df.csv', 'pathset.npy'):
+            os.remove(join(outputdir, file))
 
     def establish_logger(self, outputdir, _q=False, _v=False):
         '''prepare logging setting
@@ -119,6 +130,10 @@ def main():
     parser.add_argument("-q", "--quiet", help="set logging level to WARNING",
                         action="store_true")
     parser.add_argument("-v", "--verbose", help="set logging level to DEBUG",
+                        action="store_true")
+    parser.add_argument("-d", "--delete", help="delete extra files to save space",
+                        action="store_true")
+    parser.add_argument("-c", "--clean", help="delete analyzed files if existed",
                         action="store_true")
     parser.add_argument("input", nargs="*", help="input argument file path")
     args = parser.parse_args()

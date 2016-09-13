@@ -214,7 +214,7 @@ def pd_array_convert(path):
     np.savez_compressed(join(dirname(path), file_name), **dic_save)
 
 
-def pd_array_convert_cell_prop(path):
+def pd_array_convert_cell_prop(path, time):
     df = pd.read_csv(path, index_col=['object', 'ch', 'prop', 'frame'])
     objects, channels, props = [list(i) for i in df.index.levels[:3]]
     labels = [i for i in product(objects, channels, props)]
@@ -241,7 +241,7 @@ def pd_array_convert_cell_prop(path):
     for cpe in cell_props_exists:
         new_labels[labels.index(cpe)] = [cpe[2], ]
 
-    dic_save = {'data': arr, 'labels': new_labels}
+    dic_save = {'data': arr, 'labels': new_labels, 'time': time}
     file_name = basename(path).split('.')[0]
     np.savez_compressed(join(dirname(path), file_name), **dic_save)
 

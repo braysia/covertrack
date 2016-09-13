@@ -26,15 +26,21 @@ class SegmentationCaller(object):
         self.argdict = _check_if_processed(self.argdict)
 
     def run(self):
+        """
+        By default, it will set object_name to 'nuclei' and ch to channels[0].
+        """
         out_folder = basename(self.argdict['outputdir'])
         self.logger.warn('{0} started for {1}.'.format(self.PROCESS, out_folder))
-        self.iter_channels()
+        for func_args in self.argdict[ARG_VAR]:
+            self.obj = func_args.pop('object_name') if 'object_name' in func_args else 'nuclei'
+            self.ch = func_args.pop('ch_img') if 'ch_img' in func_args else self.argdict['channels'][0]
+            self.func_args = func_args
+            self.iter_channels()
         self.logger.info(self.PROCESS + ' completed.')
 
     def iter_channels(self):
         ''' no loop, just the first channel'''
-        ch = self.argdict['channels'][0]
-        self.pathset = self.argdict['channeldict'][ch]
+        self.pathset = self.argdict['channeldict'][self.ch]
         self.iter_frames()
 
     def iter_frames(self):
@@ -48,12 +54,12 @@ class SegmentationCaller(object):
             self.save_output(imgpath)
 
     def run_operations(self):
-        for func_args in self.argdict[ARG_VAR]:
-            func_args = func_args.copy()
-            func_name = func_args.pop('name')
-            func = getattr(operations, func_name)
-            self.func = func
-            self.label = func(self.img, self.holder, **func_args)
+        func_args = self.func_args
+        func_args = func_args.copy()
+        func_name = func_args.pop('name')
+        func = getattr(operations, func_name)
+        self.func = func
+        self.label = func(self.img, self.holder, **func_args)
 
     def check_results_each_frame(self):
         msg = '{0} objects found...'.format(len(np.unique(self.label)-1))

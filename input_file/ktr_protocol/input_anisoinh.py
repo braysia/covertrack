@@ -10,9 +10,9 @@ output_parent_dir = join(ROOTDIR, 'output', 'AnisoInh')
 first_frame = None
 last_frame = None
 
-channels = ['DAPI', 'YFP']
 objects = ['nuclei', 'cytoplasm']  # first object will be used for tracking
 
+setup_args = ((dict(name='retrieve_files', channels=['DAPI', 'YFP'])), )
 
 # Preprocessing for tracking
 preprocess_args = (dict(name='hist_matching', ch='DAPI'),

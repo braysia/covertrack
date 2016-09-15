@@ -119,6 +119,7 @@ class PostprocessCaller(object):
         self.argdict['objdict'][self.obj] = objpathset
         with open(join(self.argdict['outputdir'], 'setting.json'), 'w') as f1:
             json.dump(self.argdict, f1, indent=4)
+        self.logger.info('setting.json updated with objdict')
         time.sleep(1)
 
     def _save_df(self):

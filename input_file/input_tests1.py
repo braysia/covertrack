@@ -7,13 +7,12 @@ output_parent_dir = join(ROOT_FOLDER, 'tests', 'output')
 first_frame = None
 last_frame = None
 
-objects = ['nuclei', 'cytoplasm']  # first object will be used for tracking
 
 setup_args = ((dict(name='retrieve_files', channels=['CFP', 'YFP'])), )
 
 preprocess_args = (dict(name='background_subtraction_prcblock'), )
 
-segment_args = (dict(name='example_thres', THRES=1500),)
+segment_args = (dict(name='example_thres', object_name='nuclei', THRES=1500),)
 
 # Tracking
 track_args = (dict(name='nearest_neighbor', DISPLACEMENT=15, MASSTHRES=0.2), )

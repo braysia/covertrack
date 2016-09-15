@@ -37,9 +37,7 @@ class SubDetection(object):
             if 'seed_obj' in func_args:
                 if func_args['seed_obj']:
                     seed_obj = func_args.pop('seed_obj')
-                    channel_seed = self.argdict['channels'][self.argdict['objects'].index(seed_obj)]
-                    seed_pathset = self.argdict['channeldict'][channel_seed]
-                    seed_pathset.sort()
+                    seed_pathset = self.argdict['objdict'][seed_obj]
             if 'ch_img' in func_args:
                 self.channel = func_args.pop('ch_img')
                 if self.channel:
@@ -47,9 +45,9 @@ class SubDetection(object):
                         pathset = zip(*[self.argdict['channeldict'][i] for i in self.channel])
                     else:
                         pathset = self.argdict['channeldict'][self.channel]
-                        pathset.sort()
             else:
                 self.channel = self.argdict['channels'][0]
+                pathset = self.argdict['channeldict'][self.argdict['channels'][0]]
             self.iter_frames(func_args, pathset, seed_pathset)
 
     def iter_frames(self, func_args, pathset, seed_pathset):
@@ -61,8 +59,6 @@ class SubDetection(object):
             self.holder.seed_imgpath = seed_imgpath
             self.holder.argdict = self.argdict
             self.run_operations(func_args)
-            if not imgpath:
-                imgpath = seed_imgpath
             if isinstance(imgpath, list) or isinstance(imgpath, tuple):
                 imgpath = imgpath[0]
             self.save_output(imgpath)
@@ -74,9 +70,7 @@ class SubDetection(object):
         self.sub_label = func(self.img, self.label, self.holder, **func_args)
 
     def _load_label(self, imgpath):
-        directory = join(self.argdict['outputdir'], 'objects')
-        filename = basename(imgpath).split('.')[0] + '_{0}.png'.format(self.argdict['objects'][0])
-        return imread(join(directory, filename))
+        return imread(imgpath)
 
     def save_output(self, imgpath):
         directory = join(self.argdict['outputdir'], 'objects')

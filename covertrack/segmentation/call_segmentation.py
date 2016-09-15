@@ -70,5 +70,5 @@ class SegmentationCaller(object):
         '''
         label = np.uint16(self.label)
         directory = join(self.argdict['outputdir'], 'segmented')
-        filename = basename(imgpath).split('.')[0] + '.png'
+        filename = basename(imgpath).split('.')[0] + '_{0}.png'.format(self.obj)
         png.from_array(label, 'L').save(join(directory, filename))

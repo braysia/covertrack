@@ -37,8 +37,9 @@ class TrackingCaller(object):
 
     def iter_channels(self):
         ''' no loop, just the first channel'''
-        ch = self.argdict['channels'][0]
-        self.obj = self.argdict['objects'][0]
+        fir_func_arg = self.argdict[ARG_VAR][0]
+        ch = fir_func_arg.pop('ch_img') if 'ch_img' in fir_func_arg else self.argdict['channels'][0]
+        self.obj = fir_func_arg.pop('object_name') if 'object_name' in fir_func_arg else 'nuclei'
         self.pathset = self.argdict['channeldict'][ch]
         self.iter_frames()
 
@@ -63,7 +64,7 @@ class TrackingCaller(object):
 
     def load_label(self, imgpath):
         directory = join(self.argdict['outputdir'], 'segmented')
-        filename = basename(imgpath).split('.')[0] + '.png'
+        filename = basename(imgpath).split('.')[0] + '_{0}.png'.format(self.obj)
         return imread(join(directory, filename))
 
     def prepare_curr_cells(self):

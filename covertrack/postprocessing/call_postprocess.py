@@ -13,7 +13,8 @@ from os.path import join, basename
 from covertrack.utils.file_handling import _check_if_processed
 from scipy.ndimage import imread
 import json
-
+from posttrack_utils.postprocess_io import make_obj_path
+import time
 
 SAVE_DIVISION = False
 ARG_VAR = 'postprocess_args'
@@ -46,8 +47,10 @@ class PostprocessCaller(object):
 
     def iter_channels(self):
         ''' no loop, just the first channel'''
-        self.ch = self.argdict['channels'][0]
-        self.obj = self.argdict['objects'][0]
+        fir_func_arg = self.argdict[ARG_VAR][0]
+        ch = fir_func_arg.pop('ch_img') if 'ch_img' in fir_func_arg else self.argdict['channels'][0]
+        self.ch = ch
+        self.obj = fir_func_arg.pop('object_name') if 'object_name' in fir_func_arg else 'nuclei'
         self.pathset = sorted(self.argdict['channeldict'][self.ch])
         self.iter_frames()
         self.post_operation()
@@ -66,7 +69,6 @@ class PostprocessCaller(object):
                                              self.holder, frame).make_list()
             self.storage.append(curr_cells)
 
-
     def run_operations(self):
         self.holder.num_frame = len(self.argdict['channeldict'].values()[0])
         for func_args in self.argdict[ARG_VAR]:
@@ -84,6 +86,7 @@ class PostprocessCaller(object):
         self.run_operations()
         self.logger.info('Saving labels...')
         self._save_storage_as_labels()
+        self._add_objdict_to_json()
         self.logger.info('Saving initial dataframe...')
         self._save_df()
 
@@ -108,6 +111,15 @@ class PostprocessCaller(object):
                 newlabel[label == cell.prop.label_id] = cell.cell_id
             save_label(newlabel, self.argdict['outputdir'], imgpath, self.obj)
         self.storage = cells
+
+    def _add_objdict_to_json(self):
+        objpathset = [make_obj_path(self.argdict['outputdir'], i, self.obj) for i in self.pathset]
+        if 'objdict' not in self.argdict:
+            self.argdict['objdict'] = {}
+        self.argdict['objdict'][self.obj] = objpathset
+        with open(join(self.argdict['outputdir'], 'setting.json'), 'w') as f1:
+            json.dump(self.argdict, f1, indent=4)
+        time.sleep(1)
 
     def _save_df(self):
         '''Save output as DataFrame'''

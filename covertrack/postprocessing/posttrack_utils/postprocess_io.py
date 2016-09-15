@@ -9,18 +9,21 @@ from covertrack.utils.file_handling import ConvertDfSelected
 from covertrack.utils.seg_utils import find_label_boundaries
 
 
-def save_label(label, outputdir, imgpath, object_name):
+def make_obj_path(outputdir, imgpath, object_name, folder='objects', apd=''):
+    directory = join(outputdir, folder)
+    filename = basename(imgpath).split('.')[0] + '_{0}{1}.png'
+    filename = filename.format(object_name, apd)
+    return join(directory, filename)
+
+
+def save_label(label, outputdir, imgpath, obj_name):
     # Save objects
-    directory = join(outputdir, 'objects')
-    filename = basename(imgpath).split('.')[0] + '_{0}.png'
-    filename = filename.format(object_name)
-    png.from_array(label, 'L').save(join(directory, filename))
+    obj_path = make_obj_path(outputdir, imgpath, obj_name)
+    png.from_array(label, 'L').save(obj_path)
     # Save outlines
-    directory = join(outputdir, 'outlines')
-    filename = basename(imgpath).split('.')[0] + '_{0}_outlines.png'
-    filename = filename.format(object_name)
+    outline_path = make_obj_path(outputdir, imgpath, obj_name, folder='outlines', apd='_outlines')
     outline = find_label_boundaries(label)
-    png.from_array(outline, 'L').save(join(directory, filename))
+    png.from_array(outline, 'L').save(outline_path)
 
 
 def save_div_img(argset, obj, pathset, storage):

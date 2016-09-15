@@ -135,16 +135,16 @@ def main():
                         action="store_true")
     parser.add_argument("-c", "--clean", help="delete analyzed files if existed",
                         action="store_true")
+    parser.add_argument("-n", "--cores", help="number of cores for multiprocessing",
+                        type=int)
     parser.add_argument("input", nargs="*", help="input argument file path")
     args = parser.parse_args()
-    # If nothing is specified, then set it to True
     if not any([getattr(args, i) for i in PROCESSES]):
         [setattr(args, i, True) for i in PROCESSES]
     if len(args.input) == 1:
         CovertrackArgs(args.input[0], None, args).run()
     if len(args.input) > 1:
-        num_cores = multiprocessing.cpu_count()
-        num_cores = len(args.input) if len(args.input) < num_cores else num_cores
+        num_cores = args.cores
         print str(num_cores) + ' started parallel'
         Parallel(n_jobs=num_cores)(delayed(single_call)(i, None, args) for i in args.input)
 

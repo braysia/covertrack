@@ -102,13 +102,17 @@ def adaptive_thresh(img, RATIO=3.0, FILTERINGSIZE=50):
     bw = img > fim * RATIO
     return bw
 
+
 def sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING):
+    """Tyical routines including filling holes, remove small and large objects.
+    """
     label = gray_fill_holes(label)
     label = skimorph.remove_small_objects(label, DEBRISAREA, connectivity=4)
     antibw = skimorph.remove_small_objects(label, MAXSIZE, connectivity=4)
     antibw = antibw.astype(bool)
     label[antibw] = 0
     return label
+
 
 def lap_local_max(img, sigma_list, THRES):
     img = np.uint16(img)
@@ -124,6 +128,7 @@ def lap_local_max(img, sigma_list, THRES):
     local_maxima = local_maxima.sum(axis=2)
     local_maxima = skilabel(local_maxima)
     return local_maxima
+
 
 def sitk_watershed_intensity(img, local_maxima):
     seedimage = sitk.GetImageFromArray(local_maxima.astype(np.uint16))#

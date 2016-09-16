@@ -13,7 +13,7 @@ from segment_utils.filters import sizefilterandopen, sizefilter_for_label
 from segment_utils.filters import devide_and_label_objects, highpassfilter
 from segment_utils.filters import remove_thin_objects, sitk_watershed_intensity
 from segment_utils.filters import lap_local_max, extract_foreground_adaptive, calc_lapgauss
-from segment_utils.filters import enhance_edges, remove_thin_objects, curvature_anisotropic_smooth
+from segment_utils.filters import enhance_edges
 from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 from skimage.measure import regionprops
 
@@ -66,6 +66,7 @@ def logglobal(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
+
 def logadaptivegauss(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, magnitude=2,
                      NUCRAD=10, FILTERINGSIZE=100, T=10, SHRINK=0, REGWSHED=10, GLAP=3, HPASS=2.5):
     logimg = np.log(img)
@@ -85,6 +86,7 @@ def logadaptivegauss(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, magnit
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
+
 
 def adaptivethresh2blocks(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=50, MAXSIZE=1000,
                           OPENING=2, FILTERSIZE=1, SHRINK=0, REGWSHED=10):
@@ -190,7 +192,6 @@ def lapgauss_adaptive(img, holder, RATIO=3.0, FILTERINGSIZE=50, SIGMA=2.5, DEBRI
                       MAXSIZE=1000, OPENING=2,
                       SHRINK=0, REGWSHED=10, COPEN=1, THINERODE=4):
     bw = extract_foreground_adaptive(img, RATIO, FILTERINGSIZE)
-    # img = curvature_anisotropic_smooth(img)
     cimg = calc_lapgauss(img, SIGMA)
     bw[cimg > 0] = 0
     bw = binary_fill_holes(bw)
@@ -208,7 +209,6 @@ def lapgauss_adaptive(img, holder, RATIO=3.0, FILTERINGSIZE=50, SIGMA=2.5, DEBRI
 
 def lapgauss_constant(img, holder, SIGMA=2.5, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
                       SHRINK=0, REGWSHED=10, THRES=0.3, COPEN=1, THINERODE=4):
-    # img = curvature_anisotropic_smooth(img)
     cimg = calc_lapgauss(img, SIGMA)
     bw = cimg > THRES
     bw = binary_fill_holes(bw)

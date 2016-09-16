@@ -66,7 +66,7 @@ def run_lap(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
 
     Args:
     DISPLACEMENT (int): The maximum distance (in pixel)
-    MASSTHRES (float): The maximum difference of total intensity changes.
+    MASSTHRES (float):  The maximum difference of total intensity changes.
                         0.2 means it allows for 20% total intensity changes.
     '''
 
@@ -104,16 +104,17 @@ def run_lap(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
     return container
 
 
-
 def watershed_distance(img, label, container, holder, ERODI=5,
                        DEBRISAREA=50, DISPLACEMENT=50, MASSTHRES=0.2):
     '''watershed existing label, meaning make a cut at the deflection.
+    After the cuts, objects will be linked if they are within DISPLACEMENT and MASSTHRES.
+    If two candidates are found, it will pick a closer one.
 
     Args:
-    ERODI (int): Erosion size element for generating watershed seeds.
-                 Smaller ERODI will allow more cuts.
+    ERODI (int):        Erosion size element for generating watershed seeds.
+                        Smaller ERODI will allow more cuts.
     DISPLACEMENT (int): The maximum distance (in pixel)
-    MASSTHRES (float): The maximum difference of total intensity changes.
+    MASSTHRES (float):  The maximum difference of total intensity changes.
                         0.2 means it allows for 20% total intensity changes.
     '''
 
@@ -156,6 +157,7 @@ def jitter_correction_label(img, label, container, holder):
     This will add jitters to corr_x and corr_y.
     Values of jitter is relative to the first frame, so they accumulate jitters
     in consecutive frames in holder.jitter.
+    Add this as a first algorithm in track_args when use.
     '''
     if not hasattr(holder, 'prev_label'):
         holder.prev_label = label
@@ -183,9 +185,9 @@ def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLA
         Separate two objects by making a cut at the deflection. For each points on the outline,
         it will make a triangle separated by EDGELEN and calculates the angle facing inside.
 
-        EDGELEN (int): A length of edges of triangle on the nuclear perimeter.
-        THRES_ANGLE (int): Define the neck points if a triangle has more than this angle.
-        STEPLIM (int): points of neck will be separated by STEPLIM parimeters. Ideally perim/2.
+        EDGELEN (int):      A length of edges of triangle on the nuclear perimeter.
+        THRES_ANGLE (int):  Define the neck points if a triangle has more than this angle.
+        STEPLIM (int):      points of neck needs to be separated by at least STEPLIM in parimeters.
         """
 
         untr_prev, untr_curr = container.unlinked

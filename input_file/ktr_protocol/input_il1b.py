@@ -10,8 +10,6 @@ output_parent_dir = join(ROOTDIR, 'output', 'IL1B')
 first_frame = None
 last_frame = None
 
-objects = ['nuclei', 'cytoplasm'] # first object will be used for tracking
-
 setup_args = ((dict(name='retrieve_files', channels=['DAPI', 'TRITC', 'YFP'])), )
 
 # Preprocessing for tracking

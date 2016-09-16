@@ -7,8 +7,6 @@ output_parent_dir = join(ROOT_FOLDER, 'tests', 'output')
 first_frame = None
 last_frame = None
 
-objects = ['nuclei', 'cytoplasm']  # first object will be used for tracking
-
 setup_args = (dict(name='retrieve_files_glob', channels=['CFP', 'YFP'],
                    patterns=['*channel000*.png', '*channel001*.png']), )
 

@@ -7,9 +7,6 @@ output_parent_dir = join(ROOT_FOLDER, 'tests', 'output')
 first_frame = None
 last_frame = None
 
-channels = ['Far-red', 'YFP']
-objects = ['nuclei', 'cytoplasm']  # first object will be used for tracking
-
 setup_args = ((dict(name='retrieve_files', channels=['Far-red', 'YFP'])), )
 
 preprocess_args = (dict(name='background_subtraction_wavelet'), )

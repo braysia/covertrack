@@ -40,6 +40,7 @@ class SegmentOptimizer(object):
         sc = ModifiedSegmentCaller(outputdir)
         sc.argdict['segment_args'][0]['name'] = segment_func
         sc.frame = frame
+        sc.set_obj_ch(sc.argdict['segment_args'])
         # load image
         sc.iter_channels()
         self.img = sc.store_img

@@ -32,11 +32,14 @@ class SegmentationCaller(object):
         out_folder = basename(self.argdict['outputdir'])
         self.logger.warn('{0} started for {1}.'.format(self.PROCESS, out_folder))
         for func_args in self.argdict[ARG_VAR]:
-            self.obj = func_args.pop('object_name') if 'object_name' in func_args else 'nuclei'
-            self.ch = func_args.pop('ch_img') if 'ch_img' in func_args else self.argdict['channels'][0]
+            self.set_obj_ch(func_args)
             self.func_args = func_args
             self.iter_channels()
         self.logger.info(self.PROCESS + ' completed.')
+
+    def set_obj_ch(self, func_args):
+        self.obj = func_args.pop('object_name') if 'object_name' in func_args else 'nuclei'
+        self.ch = func_args.pop('ch_img') if 'ch_img' in func_args else self.argdict['channels'][0]
 
     def iter_channels(self):
         ''' no loop, just the first channel'''

@@ -57,6 +57,9 @@ git clone https://github.com/braysia/covertrack.git
 cd covertrack
 python setup.py install
 ```
+[imagemagick](http://www.imagemagick.org/script/index.php) is required.  
+For futher details see [here](https://gist.github.com/braysia/ee6f6a946274b228e3a8c7df352c8055).
+
 
 ### Test
 For a quick run, run `./tests/tests.sh`.  

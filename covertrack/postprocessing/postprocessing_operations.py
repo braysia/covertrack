@@ -46,11 +46,13 @@ def cut_short_traces(traces, holder, minframe=4):
 
 
 def gap_closing(traces, holder, DISPLACEMENT=100, MASSTHRES=0.15, maxgap=4):
-
+    '''
+    Connect cells between non-consecutive frames if it meets criteria.
+    maxgap (int): the maximum frames allowed to connect two cells.
+    '''
     trhandler = TracesController(traces)
-    '''
-    Make sure not to have a cell as both disappeared and appeared cells
-    '''
+
+    # make sure not to have a cell as both disappered and appeared cells
     for trace in trhandler.traces[:]:
         if len(trace) < 2:
             trhandler.traces.remove(trace)

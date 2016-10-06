@@ -5,7 +5,7 @@ The final output from the ApplyObjects module is `df.npz`.
 This npz file can be opened with `numpy.load`.
 It contains the following three items:
 
-1. labels  
+- labels  
 1d array of lists containing properties.  
 e.g.
 ```
@@ -14,11 +14,11 @@ e.g.
    ['cell_id']]
 ```
 
-2. time   
+- time   
 1d array representing time. By default, time is a consecutive integers ranged from 0 to the last frame.  
 e.g. `time = range(data.shape[2])` 
 
-3. data  
+- data  
 3-dimensional numpy array.  
 The first dimension represents different properties. The order of properties are ordered with labels. 
 The second dimension represents each cell.  

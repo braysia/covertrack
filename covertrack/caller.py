@@ -109,6 +109,18 @@ def single_call(input_path, imgdir=None, args=None):
     CovertrackArgs(input_path, imgdir, args).run()
 
 
+def call_help_ops():
+    from settingup import setup_operations
+    from preprocess import preprocess_operations
+    from segmentation import segmentation_operations
+    from tracking import tracking_operations
+    from postprocessing import postprocessing_operations
+    from subdetection import subdetection_operations
+    ops = [i for i in dir() if i.endswith('operations')]
+    for op in ops:
+        print help(eval(op))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-1", "--setup", help="run settingup",
@@ -137,8 +149,13 @@ def main():
                         action="store_true")
     parser.add_argument("-n", "--cores", help="number of cores for multiprocessing",
                         type=int)
+    parser.add_argument("-l", "--list", help="list all operations by calling help",
+                        action="store_true")
     parser.add_argument("input", nargs="*", help="input argument file path")
     args = parser.parse_args()
+
+    if args.list:
+        call_help_ops()
     if not any([getattr(args, i) for i in PROCESSES]):
         [setattr(args, i, True) for i in PROCESSES]
     if len(args.input) == 1:

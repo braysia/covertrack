@@ -16,6 +16,7 @@ Covertrack tyically goes through the following 7 modules.
 7. ApplyObjects
 
 From 1 to 6, you can specify what algorithms to use.  
+To quickly list all the available operations, run `covertrack -l`.  
 
 In __*_operations.py__ (e.g. *covertrack/segmentation/segmentation_operations.py*), you will see a list of functions.  Each functions (or operations) defines a unique algorithm. So this file is a catalogue of functions.
 

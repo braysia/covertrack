@@ -15,7 +15,7 @@ import multiprocessing
 from joblib import Parallel, delayed
 import imp
 import argparse
-from argparse import Namespace  # this is required for fireworks
+from argparse import Namespace
 from logging import getLogger, StreamHandler, FileHandler, DEBUG, WARNING, INFO
 import shutil
 

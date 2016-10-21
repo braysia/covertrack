@@ -256,6 +256,7 @@ def back_track(img, label, container, holder, BACKFRAME=None):
     Implement tracking from the BACKFRAME frame to the beginning and then beginning to the end.
     By running this, it will find a better segmentation in the first frame if you combine
     with the adaptive segmentation such as track_neck_cut or watershed_distance.
+    This modifies self.pathset in call_tracking and dynamically change the behavior the of the loop.
     Need to be placed at the end of operations.
     Args:
         BACKFRAME (int): decide which frames to start the back-tracking.

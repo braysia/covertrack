@@ -77,6 +77,8 @@ def run_lap(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
     dist[dist > DISPLACEMENT] = np.Inf  # assign a large cost for unlikely a pair
     # dist[abs(massdiff) > MASSTHRES] = np.Inf
     cost = dist
+    if cost.shape[0] == 0 or cost.shape[1] == 0:
+        return container
 
     # Define initial costBorn and costDie in the first frame
     if not hasattr(holder, 'cost_born') or hasattr(holder, 'cost_die'):
@@ -183,7 +185,7 @@ def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLA
                    MASSTHRES=0.2, LIM=10, EDGELEN=5, THRES_ANGLE=180, STEPLIM=10):
         """
         Separate two objects by making a cut at the deflection. For each points on the outline,
-        it will make a triangle separated by EDGELEN and calculates the angle facing inside.
+        it will make a triangle separated by EDGELEN and calculates the angle facing inside of concave.
 
         EDGELEN (int):      A length of edges of triangle on the nuclear perimeter.
         THRES_ANGLE (int):  Define the neck points if a triangle has more than this angle.

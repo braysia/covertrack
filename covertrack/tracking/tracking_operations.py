@@ -69,7 +69,6 @@ def run_lap(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
     MASSTHRES (float):  The maximum difference of total intensity changes.
                         0.2 means it allows for 20% total intensity changes.
     '''
-
     dist = container._dist_unlinked
     massdiff = container._masschange_unlinked
     '''search radius is now simply set by maximum displacement possible.
@@ -108,7 +107,9 @@ def run_lap(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
 
 def watershed_distance(img, label, container, holder, ERODI=5,
                        DEBRISAREA=50, DISPLACEMENT=50, MASSTHRES=0.2):
-    '''watershed existing label, meaning make a cut at the deflection.
+    '''
+    Adaptive segmentation by using tracking informaiton.
+    watershed existing label, meaning make a cut at the deflection.
     After the cuts, objects will be linked if they are within DISPLACEMENT and MASSTHRES.
     If two candidates are found, it will pick a closer one.
 
@@ -184,6 +185,7 @@ def jitter_correction_label(img, label, container, holder):
 def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLACEMENT=50,
                    MASSTHRES=0.2, LIM=10, EDGELEN=5, THRES_ANGLE=180, STEPLIM=10):
         """
+        Adaptive segmentation by using tracking informaiton.
         Separate two objects by making a cut at the deflection. For each points on the outline,
         it will make a triangle separated by EDGELEN and calculates the angle facing inside of concave.
 
@@ -247,3 +249,25 @@ def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLA
         # add new cells
         container.curr_cells.extend(newcells_to_update)
         return container
+
+
+def back_track(img, label, container, holder, BACKFRAME=None):
+    """
+    Implement tracking from the BACKFRAME frame to the beginning and then beginning to the end.
+    By running this, it will find a better segmentation in the first frame if you combine
+    with the adaptive segmentation such as track_neck_cut or watershed_distance.
+    Need to be placed at the end of operations.
+    Args:
+        BACKFRAME (int): decide which frames to start the back-tracking.
+    """
+    ind = holder.pathset.index(holder.imgpath)
+    if not hasattr(holder, 'back_flag'):
+        holder.back_flag = True
+    if holder.back_flag:
+        for i in holder.pathset:
+            if holder.back_flag:
+                for ii in holder.pathset[:BACKFRAME]:
+                    holder.pathset.insert(ind, ii)
+                    holder.back_flag = False
+                holder.pathset.insert(ind, holder.pathset[-1])
+    return container

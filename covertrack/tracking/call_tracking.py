@@ -46,6 +46,7 @@ class TrackingCaller(object):
     def iter_frames(self):
         '''iterate over frames
         '''
+        self.holder.pathset = self.pathset
         for frame, imgpath in enumerate(self.pathset):
             self.holder.frame = frame
             self.logger.info('\t{0} frame {1}...'.format(self.PROCESS, frame))

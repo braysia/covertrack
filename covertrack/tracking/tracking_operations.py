@@ -181,7 +181,7 @@ def jitter_correction_label(img, label, container, holder):
     return container
 
 
-def jitter_correction_label_at_frame(img, label, container, holder, FRAME=0):
+def jitter_correction_label_at_frame(img, label, container, holder, FRAME=1):
     """
         FRAME (List(int)): a list of frames to run jitter correction
     """
@@ -190,7 +190,8 @@ def jitter_correction_label_at_frame(img, label, container, holder, FRAME=0):
     if not hasattr(holder, 'prev_label'):
         holder.prev_label = label
     if holder.frame in FRAME:
-        return jitter_correction_label(img, label, container, holder)
+        container = jitter_correction_label(img, label, container, holder)
+    return container
 
 
 def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLACEMENT=50,

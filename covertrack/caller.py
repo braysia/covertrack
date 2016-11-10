@@ -1,5 +1,4 @@
 import _import
-
 from os.path import join
 from settingup.settingup import SettingUpCaller
 from preprocess.call_preprocessing import PreprocessCaller
@@ -18,9 +17,11 @@ import argparse
 from argparse import Namespace
 from logging import getLogger, StreamHandler, FileHandler, DEBUG, WARNING, INFO
 import shutil
+import numpy as np
 
 PROCESSES = ('setup', 'preprocess', 'segment', 'track', 'postprocess',
              'subdetect', 'apply', 'compress')
+np.random.seed(0)
 
 
 class Covertrack(object):
@@ -110,6 +111,9 @@ def single_call(input_path, imgdir=None, args=None):
 
 
 def call_help_ops():
+    """
+    Call help(*_operations) in a loop.
+    """
     from settingup import setup_operations
     from preprocess import preprocess_operations
     from segmentation import segmentation_operations

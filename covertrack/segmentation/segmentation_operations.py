@@ -17,6 +17,8 @@ from segment_utils.filters import enhance_edges
 from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 from skimage.measure import regionprops
 
+np.random.seed(0)
+
 
 def example_thres(img, holder, THRES=100):
     """take pixel above THRES as a foreground.

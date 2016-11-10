@@ -11,11 +11,15 @@ from covertrack.segmentation.segment_utils.filters import sizefilterandopen
 from covertrack.utils.seg_utils import calc_neck_score_thres_filtered, labels2outlines, cut_neck
 from skimage.segmentation import clear_border
 from skimage.measure import regionprops
+from logging import getLogger
+
 
 '''
 To track cells, simply set "cell.next = cell_in_curr_frame"
 
 '''
+
+logger = getLogger('covertrack.tracking')
 
 
 def cell_nearest_neighbor(img, label, container, holder, DISPLACEMENT=100, MASSTHRES=0.2):
@@ -178,12 +182,13 @@ def jitter_correction_label(img, label, container, holder):
             cell.prop.jitter_y = holder.jitter[0]
             cell.prop.corr_x = cell.prop.corr_x + holder.jitter[1]
             cell.prop.corr_y = cell.prop.corr_y + holder.jitter[0]
+    logger.debug("\t\tA field moved {0} pix to x and {1} pix to y".format(*holder.jitter))
     return container
 
 
 def jitter_correction_label_at_frame(img, label, container, holder, FRAME=1):
     """
-        FRAME (List(int)): a list of frames to run jitter correction
+        FRAME (List(int) or int): a list of frames to run jitter correction
     """
     if isinstance(FRAME, int):
         FRAME = [FRAME, ]
@@ -191,6 +196,7 @@ def jitter_correction_label_at_frame(img, label, container, holder, FRAME=1):
         holder.prev_label = label
     if holder.frame in FRAME:
         container = jitter_correction_label(img, label, container, holder)
+    logger.debug("\t\tA field moved {0} pix to x and {1} pix to y".format(*holder.jitter))
     return container
 
 

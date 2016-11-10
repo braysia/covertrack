@@ -100,6 +100,14 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("-v", "--verbose", help="set logging level to DEBUG",
                         action="store_true")
+    parser.add_argument("-d", "--delete", help="delete extra files to save space",
+                        action="store_true")
+    parser.add_argument("-c", "--clean", help="delete analyzed files if existed",
+                        action="store_true")
+    parser.add_argument("-n", "--cores", help="number of cores for multiprocessing",
+                        type=int)
+    parser.add_argument("-l", "--list", help="list all operations by calling help",
+                        action="store_true")
     parser.add_argument("-s", "--skip", help="skip if df.npz is already created",
                         action="store_true")
     parser.add_argument("input", nargs="*", help="input argument file path")

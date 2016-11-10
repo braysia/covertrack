@@ -155,9 +155,8 @@ def watershed_distance(img, label, container, holder, ERODI=5,
 
 
 def jitter_correction_label(img, label, container, holder):
-    '''Simple but more robust jitter correction based on markers.
-    It would not work if you have too few objects.
-    This will add jitters to corr_x and corr_y.
+    '''Simple but simpler jitter correction based on markers.
+    It would not work if you have too few objects. This will add jitters to corr_x and corr_y.
     Values of jitter is relative to the first frame, so they accumulate jitters
     in consecutive frames in holder.jitter.
     Add this as a first algorithm in track_args when use.
@@ -180,6 +179,18 @@ def jitter_correction_label(img, label, container, holder):
             cell.prop.corr_x = cell.prop.corr_x + holder.jitter[1]
             cell.prop.corr_y = cell.prop.corr_y + holder.jitter[0]
     return container
+
+
+def jitter_correction_label_at_frame(img, label, container, holder, FRAME=0):
+    """
+        FRAME (List(int)): a list of frames to run jitter correction
+    """
+    if isinstance(FRAME, int):
+        FRAME = [FRAME, ]
+    if not hasattr(holder, 'prev_label'):
+        holder.prev_label = label
+    if holder.frame in FRAME:
+        return jitter_correction_label(img, label, container, holder)
 
 
 def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLACEMENT=50,

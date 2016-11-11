@@ -24,11 +24,12 @@ class SettingUpCaller(object):
     logger = getLogger('covertrack.setup')
     holder = Holder()
 
-    def __init__(self, ia_path='../input_file/input_tests1.py', imgdir=None):
+    def __init__(self, outputdir, ia_path='../input_file/input_tests1.py', imgdir=None):
         self.ia_path = ia_path
         self.argfile = imp.load_source('inputArgs', ia_path)
         self.imgdir = imgdir
         self.argdict = {}
+        self.argdict['outputdir'] = outputdir
 
     def run(self):
         self.set_explicit_args()
@@ -76,7 +77,7 @@ class SettingUpCaller(object):
         '''set {output_parent_dir}/{foldername} as outputdir and make a folder.
         '''
         foldername = basename(self.imgdir)
-        self.argdict['outputdir'] = join(self.argdict['output_parent_dir'], foldername)
+        #self.argdict['outputdir'] = join(self.argdict['output_parent_dir'], foldername)
         if not exists(self.argdict['outputdir']):
             os.makedirs(self.argdict['outputdir'])
         self.__prepare_outputdir_subfolders()

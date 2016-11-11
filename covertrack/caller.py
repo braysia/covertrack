@@ -56,7 +56,7 @@ class CovertrackArgs(Covertrack):
                 shutil.rmtree(outputdir)
         self.establish_logger(outputdir, self.args.quiet, self.args.verbose)
         if self.args.setup:
-            outputdir = SettingUpCaller(self.ia_path, self.imgdir).run()
+            SettingUpCaller(outputdir, self.ia_path, self.imgdir).run()
         if self.args.preprocess:
             PreprocessCaller(outputdir).run()
         if self.args.segment:
@@ -77,8 +77,8 @@ class CovertrackArgs(Covertrack):
     def set_output(self):
         argfile = imp.load_source('inputArgs', self.ia_path)
         outputdir = join(argfile.output_parent_dir, basename(argfile.input_parent_dir))
-        if self.imgdir is not None:
-            outputdir = join(outputdir, basename(self.imgdir))
+        if self.imgdir:
+            outputdir = join(argfile.output_parent_dir, basename(self.imgdir))
         return outputdir
 
     def _attempt_delete(self, outputdir):

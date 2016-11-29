@@ -3,11 +3,14 @@ from scipy.misc import imread
 import png
 from os.path import join, basename
 from logging import getLogger
-from covertrack.utils.seg_utils import find_label_boundaries
-from covertrack.utils.file_handling import _check_if_processed
+try:
+    from covertrack.utils.seg_utils import find_label_boundaries
+    from covertrack.utils.file_handling import _check_if_processed, imgread
+except:
+    from utils.seg_utils import find_label_boundaries
+    from utils.file_handling import _check_if_processed, imgread
 import json
 from itertools import izip_longest
-from covertrack.utils.file_handling import imgread
 
 ARG_VAR = 'subdetect_args'
 

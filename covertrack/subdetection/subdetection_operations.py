@@ -6,7 +6,10 @@ from subdetect_utils.subdect_utils import dilate_to_cytoring, dilate_to_cytoring
 from subdetect_utils.subdect_utils import double_propagate
 from scipy.ndimage import imread
 from subdetect_utils.subdect_utils import gradient_anisotropic, homogenize_cell_intensity_N4, propagate_and_cleanup
-from covertrack.utils.seg_utils import adaptive_thresh
+try:
+    from covertrack.utils.seg_utils import adaptive_thresh
+except:
+    from utils.seg_utils import adaptive_thresh
 from subdetect_utils.subdect_utils import label_nearest, label_high_pass
 from subdetect_utils.subdect_utils import repair_sal
 from skimage.morphology import binary_dilation, binary_closing

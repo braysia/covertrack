@@ -1,15 +1,20 @@
 from scipy.misc import imread
 from os.path import join, basename
-from covertrack.cell import CellListMakerScalar
-from covertrack.utils.file_handling import ConvertDfSelected2 as ConvertDfSelected
 import os
 import pandas as pd
 import numpy as np
-from covertrack.utils.df_handling import add_median_ratio_cytoplasm_nuclei
+try:
+    from covertrack.cell import CellListMakerScalar
+    from covertrack.utils.file_handling import ConvertDfSelected2 as ConvertDfSelected
+    from covertrack.utils.df_handling import add_median_ratio_cytoplasm_nuclei, df_to_mat
+    from covertrack.utils.file_handling import _check_if_processed, pd_array_convert_cell_prop
+except:
+    from cell import CellListMakerScalar
+    from utils.file_handling import ConvertDfSelected2 as ConvertDfSelected
+    from utils.df_handling import add_median_ratio_cytoplasm_nuclei, df_to_mat
+    from utils.file_handling import _check_if_processed, pd_array_convert_cell_prop
 from os.path import join
 from logging import getLogger
-from covertrack.utils.df_handling import df_to_mat
-from covertrack.utils.file_handling import _check_if_processed, pd_array_convert_cell_prop
 from itertools import product
 import json
 import re

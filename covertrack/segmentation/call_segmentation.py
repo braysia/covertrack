@@ -3,7 +3,10 @@ import png
 import numpy as np
 from os.path import join, basename
 from logging import getLogger
-from covertrack.utils.file_handling import _check_if_processed
+try:
+    from covertrack.utils.file_handling import _check_if_processed
+except:
+    from utils.file_handling import _check_if_processed
 from scipy.ndimage import imread
 import json
 

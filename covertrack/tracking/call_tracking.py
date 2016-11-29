@@ -4,9 +4,13 @@ import png
 import numpy as np
 from os.path import join, basename
 from track_utils.cell_container import Container
-from covertrack.cell import CellListMaker
 from logging import getLogger
-from covertrack.utils.file_handling import _check_if_processed
+try:
+    from covertrack.cell import CellListMaker
+    from covertrack.utils.file_handling import _check_if_processed
+except:
+    from cell import CellListMaker
+    from utils.file_handling import _check_if_processed
 import json
 
 ARG_VAR = 'track_args'

@@ -4,9 +4,12 @@ from traces import division_frames_and_cell_ids
 import numpy as np
 from scipy.misc import imread
 from skimage.io import imsave
-from covertrack.utils.file_handling import initialize_threed_array
-from covertrack.utils.file_handling import ConvertDfSelected
-from covertrack.utils.seg_utils import find_label_boundaries
+try:
+    from covertrack.utils.file_handling import initialize_threed_array, ConvertDfSelected
+    from covertrack.utils.seg_utils import find_label_boundaries
+except:
+    from utils.file_handling import initialize_threed_array, ConvertDfSelected
+    from utils.seg_utils import find_label_boundaries
 
 
 def make_obj_path(outputdir, imgpath, object_name, folder='objects', apd=''):

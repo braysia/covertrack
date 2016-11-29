@@ -1,6 +1,5 @@
 import postprocessing_operations as operations
 import numpy as np
-from covertrack.cell import CellListMakerScalar
 from logging import getLogger
 from posttrack_utils.traces import assign_next_and_abs_id_to_storage
 from posttrack_utils.traces import construct_traces_based_on_next
@@ -10,7 +9,12 @@ from posttrack_utils.postprocess_io import save_label, save_div_img
 from posttrack_utils.postprocess_io import save_df, load_label
 import json
 from os.path import join, basename
-from covertrack.utils.file_handling import _check_if_processed
+try:
+    from covertrack.cell import CellListMakerScalar
+    from covertrack.utils.file_handling import _check_if_processed
+except:
+    from cell import CellListMakerScalar
+    from utils.file_handling import _check_if_processed
 from scipy.ndimage import imread
 import json
 from posttrack_utils.postprocess_io import make_obj_path

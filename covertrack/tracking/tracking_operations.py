@@ -12,7 +12,7 @@ from covertrack.utils.seg_utils import calc_neck_score_thres_filtered, labels2ou
 from skimage.segmentation import clear_border
 from skimage.measure import regionprops
 from logging import getLogger
-
+from track_utils.mi_align import MutualInfoAlignerMultiHypothesis
 
 '''
 To track cells, simply set "cell.next = cell_in_curr_frame"
@@ -198,6 +198,32 @@ def jitter_correction_label_at_frame(img, label, container, holder, FRAME=1):
         container = jitter_correction_label(img, label, container, holder)
     logger.debug("\t\tA field moved {0} pix to x and {1} pix to y".format(*holder.jitter))
     return container
+
+
+def jitter_correction_mutualinfo(img, label, container, holder):
+    # FIXME
+    if not hasattr(holder, 'prev_img'):
+        holder.prev_img = img
+    if np.any(holder.prev_img):
+        prev_img = holder.prev_img
+        mialmh = MutualInfoAlignerMultiHypothesis(prev_img, img)
+        mialmh.execute()
+        # jitter = (mialmh._j, mialmh._i)
+        jitter = (mialmh._i, mialmh._j)
+
+        if not hasattr(holder, 'jitter'):
+            holder.jitter = [0, 0]
+        for i in (0, 1):
+            holder.jitter[i] = holder.jitter[i] + jitter[i]
+        for cell in container.curr_cells:
+            cell.prop.jitter_x = holder.jitter[1]
+            cell.prop.jitter_y = holder.jitter[0]
+            cell.prop.corr_x = cell.prop.corr_x + holder.jitter[1]
+            cell.prop.corr_y = cell.prop.corr_y + holder.jitter[0]
+    logger.debug("\t\tA field moved {0} pix to x and {1} pix to y".format(*holder.jitter))
+    return container
+
+
 
 
 def track_neck_cut(img, label, container, holder, ERODI=5, DEBRISAREA=50, DISPLACEMENT=50,

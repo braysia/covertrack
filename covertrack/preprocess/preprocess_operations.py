@@ -5,7 +5,10 @@ import os
 from scipy.ndimage.morphology import grey_opening
 from skimage.transform import resize
 from scipy.ndimage.filters import median_filter
-from covertrack.utils.seg_utils import adaptive_thresh
+try:
+    from covertrack.utils.seg_utils import adaptive_thresh
+except:
+    from utils.seg_utils import adaptive_thresh
 from preprocess_utils.preprocess_utils import homogenize_intensity_n4, wavelet_subtraction
 from preprocess_utils.preprocess_utils import convert_positive, estimate_background_prc
 from preprocess_utils.preprocess_utils import curvature_anisotropic_smooth, resize_img

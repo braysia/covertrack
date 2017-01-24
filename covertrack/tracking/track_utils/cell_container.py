@@ -1,5 +1,8 @@
 import numpy as np
-from covertrack.cell import Cell
+try:
+    from covertrack.cell import Cell
+except:
+    from cell import Cell
 
 
 class CellOperator(object):

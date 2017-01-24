@@ -5,7 +5,10 @@ from skimage import morphology as skimorph
 from scipy.ndimage.morphology import binary_opening, binary_dilation
 from skimage.morphology import reconstruction
 from pymorph import neg
-from covertrack.utils.seg_utils import watershed, skilabel
+try:
+    from covertrack.utils.seg_utils import watershed, skilabel
+except:
+    from utils.seg_utils import watershed, skilabel
 from scipy.ndimage import gaussian_laplace
 from scipy.ndimage.filters import gaussian_filter
 from skimage.measure import regionprops

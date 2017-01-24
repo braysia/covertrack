@@ -1,9 +1,14 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
-from covertrack.utils.postprocess_utils import compute_segments
 from itertools import combinations
-from covertrack.utils.tracking_utils import find_one_to_one_assign
-from covertrack.utils.pairwise import one_to_one_assignment, one_to_two_assignment
+try:
+    from covertrack.utils.postprocess_utils import compute_segments
+    from covertrack.utils.tracking_utils import find_one_to_one_assign
+    from covertrack.utils.pairwise import one_to_one_assignment, one_to_two_assignment
+except:
+    from utils.postprocess_utils import compute_segments
+    from utils.tracking_utils import find_one_to_one_assign
+    from utils.pairwise import one_to_one_assignment, one_to_two_assignment
 from posttrack_utils.traces import TracesController
 from posttrack_utils.traces import construct_traces_based_on_next, convert_traces_to_storage
 from operator import attrgetter

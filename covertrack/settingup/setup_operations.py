@@ -24,7 +24,7 @@ def retrieve_files_glob(argdict, imgdir, holder, channels, patterns):
     chdict = {}
     for ch, pattern in zip(channels, patterns):
         pathset = glob.glob(join(imgdir, pattern))
-        chdict[ch] = pathset[argdict['first_frame']:argdict['last_frame']]
+        chdict[ch] = sorted(pathset)[argdict['first_frame']:argdict['last_frame']]
     argdict['channeldict'] = chdict
     argdict['channels'] = channels
     return argdict

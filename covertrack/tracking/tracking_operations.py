@@ -1,14 +1,21 @@
 import numpy as np
-from covertrack.utils.seg_utils import skilabel, watershed
-from covertrack.cell import CellListMaker
 from track_utils.cell_container import _distance_diff, _totalintensity_difference
 from track_utils.cell_calculation import calc_cell_distance, calc_cell_massdiff
-from covertrack.utils.imreg import translation
+try:
+    from covertrack.cell import CellListMaker
+    from covertrack.utils.imreg import translation
+    from covertrack.utils.seg_utils import skilabel, watershed
+    from covertrack.segmentation.segment_utils.filters import sizefilterandopen
+    from covertrack.utils.seg_utils import calc_neck_score_thres_filtered, labels2outlines, cut_neck
+except:
+    from cell import CellListMaker
+    from utils.imreg import translation
+    from utils.seg_utils import skilabel, watershed
+    from segmentation.segment_utils.filters import sizefilterandopen
+    from utils.seg_utils import calc_neck_score_thres_filtered, labels2outlines, cut_neck
 from track_utils.cell_calculation import find_one_to_one_assign, call_lap, convert_coords_to_linear
 from track_utils.cell_calculation import find_cells_overlap_linear_coords, flatlist, find_coords_overlap_coords
 from track_utils.cell_calculation import pick_closer_binarycostmat
-from covertrack.segmentation.segment_utils.filters import sizefilterandopen
-from covertrack.utils.seg_utils import calc_neck_score_thres_filtered, labels2outlines, cut_neck
 from skimage.segmentation import clear_border
 from skimage.measure import regionprops
 from logging import getLogger

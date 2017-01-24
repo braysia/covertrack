@@ -61,7 +61,11 @@ def make_multi_index_pandas2(storage, object_name, channel, unique_frames, keys=
         keys = [j for j in dir(storage[0].prop) if not j.startswith('_')]
     keys_frames = [['{0}__{1}'.format(k, i) for i in frames] for k in keys]
     keys_frames = [i for ii in keys_frames for i in ii]
-    index = pd.MultiIndex.from_product([object_name, channel, keys, frames], names=['object', 'ch', 'prop', 'frame'])
+    try:
+        # works with old version of pandas
+        index = pd.MultiIndex.from_product([object_name, channel, keys, frames], names=['object', 'ch', 'prop', 'frame'])
+    except:
+        index = pd.MultiIndex.from_product([(object_name,), (channel,), keys, frames], names=['object', 'ch', 'prop', 'frame'])
     # column_idx = pd.MultiIndex.from_product([cell_ids], names=['id'])
     column_idx = pd.MultiIndex.from_product([cell_ids])
     df = pd.DataFrame(index=index, columns=column_idx, dtype=np.float32)
@@ -71,7 +75,6 @@ def make_multi_index_pandas2(storage, object_name, channel, unique_frames, keys=
     return df
 
 
-
 def make_multi_index_pandas(storage, object_name, channel, keys=[]):
     cell_ids = np.unique([i.cell_id for i in storage])
     frames = np.unique([i.frame for i in storage])
@@ -79,10 +82,14 @@ def make_multi_index_pandas(storage, object_name, channel, keys=[]):
         keys = [j for j in dir(storage[0].prop) if not j.startswith('_')]
     keys_frames = [['{0}__{1}'.format(k, i) for i in frames] for k in keys]
     keys_frames = [i for ii in keys_frames for i in ii]
-    index = pd.MultiIndex.from_product([object_name, channel, keys, frames], names=['object', 'ch', 'prop', 'frame'])
+    try:
+        # works with old version of pandas
+        ind1 = pd.MultiIndex.from_product([object_name, channel, keys, frames], names=['object', 'ch', 'prop', 'frame'])
+    except:
+        ind1 = pd.MultiIndex.from_product([(object_name, ), (channel, ), keys, frames], names=['object', 'ch', 'prop', 'frame'])
     # column_idx = pd.MultiIndex.from_product([cell_ids], names=['id'])
     column_idx = pd.MultiIndex.from_product([cell_ids])
-    df = pd.DataFrame(index=index, columns=column_idx, dtype=np.float32)
+    df = pd.DataFrame(index=ind1, columns=column_idx, dtype=np.float32)
     for cell in storage:
         for k in keys:
             df[cell.cell_id].loc[object_name, channel, k, cell.frame] = np.float32(getattr(cell.prop, k))

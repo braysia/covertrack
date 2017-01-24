@@ -8,13 +8,17 @@ from scipy.ndimage.morphology import binary_opening
 from skimage import filters as skifilter
 from scipy.ndimage.morphology import binary_erosion
 from skimage.segmentation import clear_border
-from covertrack.utils.seg_utils import skilabel, peak_local_max_edge
+try:
+    from covertrack.utils.seg_utils import skilabel, peak_local_max_edge
+    from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
+except:
+    from utils.seg_utils import skilabel, peak_local_max_edge
+    from utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 from segment_utils.filters import sizefilterandopen, sizefilter_for_label
 from segment_utils.filters import devide_and_label_objects, highpassfilter
 from segment_utils.filters import remove_thin_objects, sitk_watershed_intensity
 from segment_utils.filters import lap_local_max, extract_foreground_adaptive, calc_lapgauss
 from segment_utils.filters import enhance_edges
-from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 from skimage.measure import regionprops
 
 np.random.seed(0)

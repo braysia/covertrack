@@ -10,7 +10,10 @@ from centrosome.propagate import propagate
 from skimage.morphology import closing
 from scipy.signal import convolve2d
 from skimage.morphology import disk
-from covertrack.utils.seg_utils import skilabel
+try:
+    from covertrack.utils.seg_utils import skilabel
+except:
+    from utils.seg_utils import skilabel
 from scipy.ndimage.filters import gaussian_filter
 from skimage.measure import regionprops
 

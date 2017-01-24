@@ -1,7 +1,8 @@
-Cython>=0.24.1
+Cython==0.24.1
 matplotlib==1.5.1
 mock==1.3.0
 numpy==1.11.1
+git+https://github.com/jfrelinger/cython-munkres-wrapper
 pandas==0.18.1
 pymorph==0.96
 PyWavelets==0.4.0
@@ -14,5 +15,4 @@ centrosome==1.0.5
 ipywidgets==5.2.2
 joblib==0.10.2
 pypng==0.0.18
-fireworks
-git+https://github.com/jfrelinger/cython-munkres-wrapper
+

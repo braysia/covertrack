@@ -20,6 +20,8 @@ from ipywidgets import interact, interactive, fixed
 import ipywidgets as widgets
 from functools import partial
 from covertrack.segmentation import segmentation_operations
+import imp
+from os.path import dirname, join, abspath, basename, exists
 
 
 '''
@@ -36,14 +38,17 @@ class text_storage(object):
 
 class SegmentOptimizer(object):
     def __init__(self, input_path, segment_func, frame=0):
-        outputdir = SettingUpCaller(input_path, None).run()
+        argfile = imp.load_source('inputArgs', input_path)
+        outputdir = join(argfile.output_parent_dir, basename(argfile.input_parent_dir))
+
+        outputdir = SettingUpCaller(outputdir, input_path, None).run()
         sc = ModifiedSegmentCaller(outputdir)
         sc.argdict['segment_args'][0]['name'] = segment_func
         sc.frame = frame
         sc.set_obj_ch(sc.argdict['segment_args'])
         # load image
         sc.iter_channels()
-        self.img = sc.store_img
+        self.img = sc.store_img.copy()
 
         # make a function
         func_args = sc.argdict['segment_args'][-1]

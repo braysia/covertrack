@@ -2,7 +2,7 @@ import os
 from os.path import join, exists, dirname
 import numpy as np
 import pandas as pd
-from os.path import basename
+from os.path import basename, dirname
 from itertools import product
 from scipy.ndimage import imread
 
@@ -198,12 +198,13 @@ def _check_if_processed(argdict):
     replace imgdir to processed folder.
     '''
     processed_dir = join(argdict['outputdir'], 'processed')
-    processed_imgs = _find_img_files(processed_dir)
+    # processed_imgs = _find_img_files(processed_dir)
+    files_processed = os.listdir(processed_dir)
+
     for channel, pathset in argdict['channeldict'].iteritems():
-        original_names = [basename(i) for i in pathset]
-        new_names = sorted([i for i in processed_imgs if channel in i])
-        if len(original_names) == len(new_names):
-            argdict['channeldict'][channel] = [join(processed_dir, i) for i in new_names]
+        processed = [join(processed_dir, basename(p)) for p in pathset if basename(p) in files_processed]
+        if len(processed) == len(pathset):
+            argdict['channeldict'][channel] = processed
     return argdict
 
 

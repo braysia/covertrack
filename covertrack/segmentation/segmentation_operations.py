@@ -1,3 +1,10 @@
+"""
+Command line option:
+    python covertrack/segmentation/segmentation_operations.py -f global_otsu -i data/testimages/img_000000000_CFP_000.png DEBRISAREA
+    =60 -o test.tif
+"""
+
+
 from __future__ import division
 import numpy as np
 from skimage import morphology as skimorph
@@ -12,14 +19,19 @@ try:
     from covertrack.utils.seg_utils import skilabel, peak_local_max_edge
     from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 except:
-    from utils.seg_utils import skilabel, peak_local_max_edge
-    from utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
+    from segment_utils.seg_utils import skilabel, peak_local_max_edge
+    from segment_utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 from segment_utils.filters import sizefilterandopen, sizefilter_for_label
 from segment_utils.filters import devide_and_label_objects, highpassfilter
 from segment_utils.filters import remove_thin_objects, sitk_watershed_intensity
 from segment_utils.filters import lap_local_max, extract_foreground_adaptive, calc_lapgauss
 from segment_utils.filters import enhance_edges
 from skimage.measure import regionprops
+from scipy.ndimage import imread
+import argparse, json
+import tifffile as tiff
+import ast
+
 
 np.random.seed(0)
 
@@ -148,7 +160,7 @@ def lap_waterhsed_intensity(img, holder, DEBRISAREA=50, BLUR=2, MAXSIZE=5000, OP
     '''
     img = gaussian_filter(img, BLUR)
     foreground = extract_foreground_adaptive(img, RATIO, FILTERINGSIZE)
-    sigma_list = range(MIN_SIGMA, MAX_SIGMA)
+    sigma_list = range(int(MIN_SIGMA), int(MAX_SIGMA))
     local_maxima = lap_local_max(img, sigma_list, THRES)
     local_maxima[-foreground] = 0
     local_maxima = skilabel(peak_local_max_edge(local_maxima, SEPARATE))
@@ -202,7 +214,7 @@ def lapgauss_adaptive(img, holder, RATIO=3.0, FILTERINGSIZE=50, SIGMA=2.5, DEBRI
     bw[cimg > 0] = 0
     bw = binary_fill_holes(bw)
     bw = skimorph.remove_small_objects(bw, DEBRISAREA, connectivity=4)
-    bw = binary_opening(bw, np.ones((COPEN, COPEN)))
+    bw = binary_opening(bw, np.ones((int(COPEN), int(COPEN))))
     bw = remove_thin_objects(bw, THINERODE)
     bw = sizefilterandopen(bw, DEBRISAREA, MAXSIZE, OPENING)
     if SHRINK > 0:
@@ -228,3 +240,24 @@ def lapgauss_constant(img, holder, SIGMA=2.5, DEBRISAREA=50, MAXSIZE=1000, OPENI
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", help="path to an image",
+                        type=str)
+    parser.add_argument("-o", "--output", help="path to save an output",
+                        type=str)
+    parser.add_argument("-f", "--function", help="function to use",
+                        type=str)
+    parser.add_argument("param", nargs="*", help="input argument file path", type=lambda kv: kv.split("="))
+    args = parser.parse_args()
+
+    if args.output is None:
+        args.output = 'temp.tif'
+    img = imread(args.input)
+    func = globals()[args.function]
+    param = dict(args.param)
+    for key, value in param.iteritems():
+        param[key] = ast.literal_eval(value)
+    seg = func(img, holder=None, **param).astype(np.float32)
+    tiff.imsave(args.output, seg)

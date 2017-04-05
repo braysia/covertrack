@@ -8,7 +8,7 @@ from pymorph import neg
 try:
     from covertrack.utils.seg_utils import watershed, skilabel
 except:
-    from utils.seg_utils import watershed, skilabel
+    from seg_utils import watershed, skilabel
 from scipy.ndimage import gaussian_laplace
 from scipy.ndimage.filters import gaussian_filter
 from skimage.measure import regionprops
@@ -23,7 +23,7 @@ def sizefilterandopen(bw, DEBRISAREA, MAXSIZE, OPENING):
     antibw = skimorph.remove_small_objects(bw, MAXSIZE, connectivity=4)
     bw[antibw] = False
     if OPENING != 0:
-        bw = binary_opening(bw, np.ones((OPENING, OPENING)), iterations=1)
+        bw = binary_opening(bw, np.ones((int(OPENING), int(OPENING))), iterations=1)
     return bw
 
 

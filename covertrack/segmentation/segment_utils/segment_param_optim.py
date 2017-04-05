@@ -1,17 +1,25 @@
 from os.path import dirname, abspath, join
 import sys
-from covertrack.settingup.settingup import SettingUpCaller
+try:
+    from covertrack.settingup.settingup import SettingUpCaller
+    from covertrack.segmentation.call_segmentation import SegmentationCaller
+    from covertrack.utils.seg_utils import find_label_boundaries
+    from covertrack.segmentation import segmentation_operations
+except:
+    from settingup.settingup import SettingUpCaller
+    from segmentation.call_segmentation import SegmentationCaller
+    from utils.seg_utils import find_label_boundaries
+    from segmentation import segmentation_operations
+
 from ipywidgets import *
 from traitlets import link
 from IPython.display import display
 import matplotlib.pyplot as plt
 from traitlets import link
-from covertrack.segmentation.call_segmentation import SegmentationCaller
 from copy import deepcopy
 from PIL import Image
 from skimage.exposure import equalize_hist, histogram, equalize_adapthist
 from skimage.morphology import dilation
-from covertrack.utils.seg_utils import find_label_boundaries
 import numpy as np
 import matplotlib.colors as mpcol
 from scipy.ndimage import imread
@@ -19,7 +27,6 @@ import inspect
 from ipywidgets import interact, interactive, fixed
 import ipywidgets as widgets
 from functools import partial
-from covertrack.segmentation import segmentation_operations
 import imp
 from os.path import dirname, join, abspath, basename, exists
 

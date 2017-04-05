@@ -8,12 +8,16 @@ from scipy.ndimage.filters import median_filter
 try:
     from covertrack.utils.seg_utils import adaptive_thresh
 except:
-    from utils.seg_utils import adaptive_thresh
+    from preprocess_utils.preprocess_utils import adaptive_thresh
 from preprocess_utils.preprocess_utils import homogenize_intensity_n4, wavelet_subtraction
 from preprocess_utils.preprocess_utils import convert_positive, estimate_background_prc
 from preprocess_utils.preprocess_utils import curvature_anisotropic_smooth, resize_img
 from preprocess_utils.preprocess_utils import histogram_matching, wavelet_subtraction_hazen
 import SimpleITK as sitk
+from scipy.ndimage import imread
+import argparse
+import tifffile as tiff
+import ast
 
 
 def hist_matching(img, holder, BINS=10000, QUANT=100):
@@ -78,3 +82,24 @@ def background_subtraction_wavelet_hazen(img, holder, THRES=100, ITER=5, WLEVEL=
     back = wavelet_subtraction_hazen(img, ITER=ITER, THRES=THRES, WLEVEL=WLEVEL)
     img = img - back
     return convert_positive(img, OFFSET)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", help="path to an image",
+                        type=str)
+    parser.add_argument("-o", "--output", help="path to save an output",
+                        type=str)
+    parser.add_argument("-f", "--function", help="function to use",
+                        type=str)
+    parser.add_argument("param", nargs="*", help="input argument file path", type=lambda kv: kv.split("="))
+    args = parser.parse_args()
+
+    if args.output is None:
+        args.output = 'temp.tif'
+    img = imread(args.input)
+    func = globals()[args.function]
+    param = dict(args.param)
+    for key, value in param.iteritems():
+        param[key] = ast.literal_eval(value)
+    seg = func(img, holder=None, **param).astype(np.float32)
+    tiff.imsave(args.output, seg)

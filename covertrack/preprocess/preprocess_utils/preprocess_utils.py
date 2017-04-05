@@ -5,6 +5,16 @@ import SimpleITK as sitk
 from wavelet_bgr import WaveletBGR
 from functools import partial
 from skimage.transform import resize
+from scipy.ndimage.filters import gaussian_filter
+
+
+def adaptive_thresh(img, RATIO=3.0, FILTERINGSIZE=50):
+    """Segment as a foreground if pixel is higher than ratio * blurred image.
+    If you set ratio 3.0, it will pick the pixels 300 percent brighter than the blurred image.
+    """
+    fim = gaussian_filter(img, FILTERINGSIZE)
+    bw = img > (fim * RATIO)
+    return bw
 
 
 def histogram_matching(img, previmg, BINS=10000, QUANT=100):

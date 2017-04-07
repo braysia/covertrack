@@ -1,3 +1,10 @@
+"""
+python covertrack/subdetection/subdetection_operations.py -f ring_dilation_above_thres -i data/testimages/img_000000000_CFP_000.png -l tests/output/testi
+mages/segmented/img_000000000_CFP_000_nuclei.png MARGIN=5
+
+"""
+
+
 import numpy as np
 import sys
 from os.path import dirname, abspath, basename, join
@@ -14,6 +21,10 @@ from subdetect_utils.subdect_utils import label_nearest, label_high_pass
 from subdetect_utils.subdect_utils import repair_sal
 from skimage.morphology import binary_dilation, binary_closing
 from scipy.ndimage.filters import minimum_filter
+from scipy.ndimage import imread
+import argparse
+import tifffile as tiff
+import ast
 
 
 def ring_dilation(img, label, holder, MARGIN=0, RINGWIDTH=4):
@@ -114,3 +125,28 @@ def segment_bacteria(img, nuc, holder, slen=3, SIGMA=0.5, THRES=50, CLOSE=3, THR
         # repair
         label = repair_sal(img, holder.pimg, comb, holder.pcomb, label, nuc_prop, nuc_loc, THRESCHANGE)
     return label.astype(np.uint16)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", help="path to an image",
+                        type=str)
+    parser.add_argument("-l", "--label_input", help="path to an image",
+                        type=str)
+    parser.add_argument("-o", "--output", help="path to save an output",
+                        type=str)
+    parser.add_argument("-f", "--function", help="function to use",
+                        type=str)
+    parser.add_argument("param", nargs="*", help="input argument file path", type=lambda kv: kv.split("="))
+    args = parser.parse_args()
+
+    if args.output is None:
+        args.output = 'temp.tif'
+    img = imread(args.input)
+    labels = imread(args.label_input).astype(np.uint16)
+    func = globals()[args.function]
+    param = dict(args.param)
+    for key, value in param.iteritems():
+        param[key] = ast.literal_eval(value)
+    seg = func(img, label=labels, holder=None, **param).astype(np.float32)
+    tiff.imsave(args.output, seg)

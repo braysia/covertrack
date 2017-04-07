@@ -10,12 +10,26 @@ from centrosome.propagate import propagate
 from skimage.morphology import closing
 from scipy.signal import convolve2d
 from skimage.morphology import disk
-try:
-    from covertrack.utils.seg_utils import skilabel
-except:
-    from utils.seg_utils import skilabel
 from scipy.ndimage.filters import gaussian_filter
 from skimage.measure import regionprops
+from skimage.measure import label as skim_label
+
+
+def skilabel(bw, conn=2):
+    '''original label might label any objects at top left as 1. To get around this pad it first.'''
+    bw = np.pad(bw, pad_width=1, mode='constant', constant_values=False)
+    label = skim_label(bw, connectivity=conn)
+    label = label[1:-1, 1:-1]
+    return label
+
+
+def adaptive_thresh(img, RATIO=3.0, FILTERINGSIZE=50):
+    """Segment as a foreground if pixel is higher than ratio * blurred image.
+    If you set ratio 3.0, it will pick the pixels 300 percent brighter than the blurred image.
+    """
+    fim = gaussian_filter(img, FILTERINGSIZE)
+    bw = img > (fim * RATIO)
+    return bw
 
 
 def dilate_sitk(label, RAD):

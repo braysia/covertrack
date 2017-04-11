@@ -76,12 +76,28 @@ def background_subtraction_prcblock(img, holder, BLOCK=10, OPEN=3, PERCENTILE=0.
     img = convert_positive(img, OFFSET)
     return img
 
+
 def background_subtraction_wavelet_hazen(img, holder, THRES=100, ITER=5, WLEVEL=6, OFFSET=50):
     """Wavelet background subtraction for STORM.
     """
     back = wavelet_subtraction_hazen(img, ITER=ITER, THRES=THRES, WLEVEL=WLEVEL)
     img = img - back
     return convert_positive(img, OFFSET)
+
+
+def flatfield_with_inputs(img, holder, ff_paths=['img00.tif', 'img01.tif']):
+    """
+    Examples:
+        preprocess_args = (dict(name='flatfield_with_inputs', ch="TRITC", ff_paths=['Exp2_w1TRITC_s1_t1.TIF', 'Exp2_w1TRITC_s1_t1.TIF']), )
+    """
+    ff_store = []
+    for path in ff_paths:
+        ff_store.append(imread(path))
+        ff = np.median(np.dstack(ff_store), axis=2)
+    img = img - ff
+    img[img < 0] = 0
+    return img
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -91,7 +107,7 @@ if __name__ == "__main__":
                         type=str)
     parser.add_argument("-f", "--function", help="function to use",
                         type=str)
-    parser.add_argument("param", nargs="*", help="input argument file path", type=lambda kv: kv.split("="))
+    parser.add_argument("param", nargs="*", help="parameters", type=lambda kv: kv.split("="))
     args = parser.parse_args()
 
     if args.output is None:

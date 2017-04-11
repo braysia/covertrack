@@ -200,9 +200,10 @@ def _check_if_processed(argdict):
     processed_dir = join(argdict['outputdir'], 'processed')
     # processed_imgs = _find_img_files(processed_dir)
     files_processed = os.listdir(processed_dir)
+    files_processed = [f.split('.')[0] for f in files_processed]
 
     for channel, pathset in argdict['channeldict'].iteritems():
-        processed = [join(processed_dir, basename(p)) for p in pathset if basename(p) in files_processed]
+        processed = [join(processed_dir, basename(p).split('.')[0] + '.png') for p in pathset if basename(p).split('.')[0] in files_processed]
         if len(processed) == len(pathset):
             argdict['channeldict'][channel] = processed
     return argdict

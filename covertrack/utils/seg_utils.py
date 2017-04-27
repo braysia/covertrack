@@ -10,7 +10,8 @@ from skimage.feature import peak_local_max
 from scipy.ndimage.filters import maximum_filter
 from skimage.draw import line
 from scipy.ndimage.filters import gaussian_filter
-
+import math
+import SimpleITK as sitk
 
 def watershed(label, regmax):
     # Since there are non-unique values for dist, add very small numbers. This will separate each marker by regmax at least.
@@ -158,3 +159,12 @@ def adaptive_thresh(img, RATIO=3.0, FILTERINGSIZE=50):
     fim = gaussian_filter(img, FILTERINGSIZE)
     bw = img > (fim * RATIO)
     return bw
+
+def circularity_thresh(labelim, circ_thres=0.8):
+    regions = regionprops(labelim)
+    for region in regions:
+        circ = 4*math.pi*(region.area/(region.perimeter**2))
+        if circ < circ_thres:
+            labelim[labelim == region.label] = 0
+    labelim = sitk.GetArrayFromImage(sitk.GrayscaleFillhole(sitk.GetImageFromArray(labelim)))
+    return labelim

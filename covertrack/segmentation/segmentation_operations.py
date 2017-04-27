@@ -52,7 +52,7 @@ def example_thres(img, holder, THRES=100):
 
 
 def global_otsu(img, holder, FILTERSIZE=1, DEBRISAREA=50, MAXSIZE=1000,
-                OPENING=2, SHRINK=0, REGWSHED=10):
+                OPENING=2, SHRINK=0, REGWSHED=10, CIRC_THRES=0.8):
     img = gaussian_filter(img, FILTERSIZE)
     global_thresh = skifilter.threshold_otsu(img)
     bw = img > global_thresh
@@ -61,12 +61,13 @@ def global_otsu(img, holder, FILTERSIZE=1, DEBRISAREA=50, MAXSIZE=1000,
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def logglobal(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
-              NUCRAD=10, magnitude=2, SHRINK=0, REGWSHED=10, HPASS=2.5, GLAP=3):
+              NUCRAD=10, magnitude=2, SHRINK=0, REGWSHED=10, HPASS=2.5, GLAP=3, CIRC_THRESH=0.8):
     logimg = np.log(img)
     highpassImg = highpassfilter(logimg, NUCRAD*HPASS)
     sharpLogimg = logimg + magnitude*highpassImg
@@ -81,12 +82,13 @@ def logglobal(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def logadaptivegauss(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, magnitude=2,
-                     NUCRAD=10, FILTERINGSIZE=100, T=10, SHRINK=0, REGWSHED=10, GLAP=3, HPASS=2.5):
+                     NUCRAD=10, FILTERINGSIZE=100, T=10, SHRINK=0, REGWSHED=10, GLAP=3, HPASS=2.5, CIRC_THRES=0.8):
     logimg = np.log(img)
     highpassImg = highpassfilter(logimg, NUCRAD*HPASS)
     sharpLogimg = logimg + magnitude*highpassImg
@@ -102,12 +104,13 @@ def logadaptivegauss(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, magnit
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def adaptivethresh2blocks(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=50, MAXSIZE=1000,
-                          OPENING=2, FILTERSIZE=1, SHRINK=0, REGWSHED=10):
+                          OPENING=2, FILTERSIZE=1, SHRINK=0, REGWSHED=10, CIRC_THRES=0.8):
     img = gaussian_filter(img, FILTERSIZE)
     bw = skifilter.threshold_adaptive(img, ADAPTIVEBLOCK, 'gaussian')
     bw2 = skifilter.threshold_adaptive(img, img.shape[0]/4, 'gaussian')
@@ -117,12 +120,13 @@ def adaptivethresh2blocks(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=50, MAXSIZE=
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def adaptivethreshwithglobal(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=50, MAXSIZE=1000,
-                             OPENING=2, FILTERSIZE=1, THRESHRELATIVE=1, SHRINK=0, REGWSHED=10):
+                             OPENING=2, FILTERSIZE=1, THRESHRELATIVE=1, SHRINK=0, REGWSHED=10, CIRC_THRES=0.8):
     img = gaussian_filter(img, FILTERSIZE)
     global_thresh = skifilter.threshold_otsu(img)
     bw = skifilter.threshold_adaptive(img, ADAPTIVEBLOCK, 'gaussian')
@@ -132,11 +136,12 @@ def adaptivethreshwithglobal(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=50, MAXSI
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 def constant_lap_edge(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, NUCRAD=6, MAGNITUDE=2,
-                      SHRINK=0, REGWSHED=10, FILTERSIZE=1, THRES=4, HPASS=8):
+                      SHRINK=0, REGWSHED=10, FILTERSIZE=1, THRES=4, HPASS=8, CIRC_THRES=0.8):
     img = gaussian_filter(img, FILTERSIZE)
     edge = enhance_edges(img, HPASS, NUCRAD)
     logimg = np.log(img) - edge * MAGNITUDE
@@ -148,12 +153,13 @@ def constant_lap_edge(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2, NUCRA
         bw = binary_opening(bw, np.ones((OPENING, OPENING)), iterations=1) #added by KL
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def lap_waterhsed_intensity(img, holder, DEBRISAREA=50, BLUR=2, MAXSIZE=5000, OPENING=0,THRES=0.01,
-                            SEPARATE=3, FILTERINGSIZE=20, RATIO=1, MIN_SIGMA=8, MAX_SIGMA=12):
+                            SEPARATE=3, FILTERINGSIZE=20, RATIO=1, MIN_SIGMA=8, MAX_SIGMA=12, CIRC_THRES=0.8):
     '''
     Approximate sigma is given by sigma=radius/sqrt(2).
     MIN_SIGMA, MAX_SIGMA, SEPARATE are important to deal with oversegmentation...
@@ -166,6 +172,7 @@ def lap_waterhsed_intensity(img, holder, DEBRISAREA=50, BLUR=2, MAXSIZE=5000, OP
     local_maxima = skilabel(peak_local_max_edge(local_maxima, SEPARATE))
     label = sitk_watershed_intensity(img, local_maxima)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
@@ -208,7 +215,7 @@ def adaptivethreshwithglobal_neckcut(img, holder, ADAPTIVEBLOCK=21, DEBRISAREA=5
 
 def lapgauss_adaptive(img, holder, RATIO=3.0, FILTERINGSIZE=50, SIGMA=2.5, DEBRISAREA=50,
                       MAXSIZE=1000, OPENING=2,
-                      SHRINK=0, REGWSHED=10, COPEN=1, THINERODE=4):
+                      SHRINK=0, REGWSHED=10, COPEN=1, THINERODE=4, CIRC_THRES=0.8):
     bw = extract_foreground_adaptive(img, RATIO, FILTERINGSIZE)
     cimg = calc_lapgauss(img, SIGMA)
     bw[cimg > 0] = 0
@@ -221,12 +228,13 @@ def lapgauss_adaptive(img, holder, RATIO=3.0, FILTERINGSIZE=50, SIGMA=2.5, DEBRI
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 
 
 def lapgauss_constant(img, holder, SIGMA=2.5, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
-                      SHRINK=0, REGWSHED=10, THRES=0.3, COPEN=1, THINERODE=4):
+                      SHRINK=0, REGWSHED=10, THRES=0.3, COPEN=1, THINERODE=4, CIRC_THRES=0.8):
     cimg = calc_lapgauss(img, SIGMA)
     bw = cimg > THRES
     bw = binary_fill_holes(bw)
@@ -238,6 +246,7 @@ def lapgauss_constant(img, holder, SIGMA=2.5, DEBRISAREA=50, MAXSIZE=1000, OPENI
         bw = binary_erosion(bw, np.ones((SHRINK, SHRINK)))
     label = devide_and_label_objects(bw, REGWSHED)
     label = sizefilter_for_label(label, DEBRISAREA, MAXSIZE, OPENING)
+    label = circularity_thresh(label, CIRC_THRES)
     label = skilabel(clear_border(label, buffer_size=2))
     return label
 

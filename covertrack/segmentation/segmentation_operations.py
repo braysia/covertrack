@@ -16,7 +16,7 @@ from skimage import filters as skifilter
 from scipy.ndimage.morphology import binary_erosion
 from skimage.segmentation import clear_border
 try:
-    from covertrack.utils.seg_utils import skilabel, peak_local_max_edge
+    from covertrack.utils.seg_utils import skilabel, peak_local_max_edge, circularity_thresh
     from covertrack.utils.seg_utils import calc_neck_score_thres, labels2outlines, cut_neck
 except:
     from segment_utils.seg_utils import skilabel, peak_local_max_edge
@@ -67,7 +67,7 @@ def global_otsu(img, holder, FILTERSIZE=1, DEBRISAREA=50, MAXSIZE=1000,
 
 
 def logglobal(img, holder, DEBRISAREA=50, MAXSIZE=1000, OPENING=2,
-              NUCRAD=10, magnitude=2, SHRINK=0, REGWSHED=10, HPASS=2.5, GLAP=3, CIRC_THRESH=0.8):
+              NUCRAD=10, magnitude=2, SHRINK=0, REGWSHED=10, HPASS=2.5, GLAP=3, CIRC_THRES=0.8):
     logimg = np.log(img)
     highpassImg = highpassfilter(logimg, NUCRAD*HPASS)
     sharpLogimg = logimg + magnitude*highpassImg
